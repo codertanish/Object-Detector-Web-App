@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Bedroom Image
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+      
+        <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="image_style.css">
+    </head>
+
+    <body style="background-image: linear-gradient(to right, #2c11e2, #2744ee, #3764f5, #5281f8, #729cf8, #77adf9, #84bcf8, #97caf6, #94d2f5, #95d9f3, #9ae0f0, #a3e6ec);">
+        <center>
+            <a href="index.html" class="btn btn-grad back_button"> <b> Back </b> </a>
+            <br>
+            <br>
+            <br>
+
+        <h1> Bedroom </h1>
+        <h3 id="status" class="btn btn-grad1"></h3>
+        <h3 id="number_of_objects" class="btn btn-grad2"></h3>
+        
+
+
+        </center>
+
+        <script> 
+        status = "";
+        img = "";
+        objects = [];
+        function preload() {
+            img = loadImage("Bedroom Picture.jpg");
+        }
+
+        function setup() {
+            canvas = createCanvas(600,420);
+            canvas.position(475, 275);
+            objectDetector = ml5.objectDetector('cocossd', modelLoaded);
+            document.getElementById("status").innerHTML = "Detecting Objects";
+        }
+
+        function draw() {
+            if(status != undefined) {
+                image(img, 0, 0, 600, 420);
+                objectDetector.detect(img, gotResult);
+                document.getElementById("number_of_objects").innerHTML = "There Are 3 Big Items In The Picture, " + objects.length + " Have/Has Been Identified";
+
+
+                
+                for(var i = 0; i < objects.length; i++) {
+                   document.getElementById("status").innerHTML = "Objects Detected";
+                   percent = floor(objects[i].confidence * 100) + "%";
+                   label = objects[i].label;
+                   x = objects[i].x;
+                   y = objects[i].y;
+                   textFont("Comic Sans MS");
+                   textSize(20);
+                   fill("#FF0000");
+                   text(label + " " + percent, x + 10, y - 10);
+                   noFill()
+                   stroke("#FF0000");
+                   rect(x, y, objects[i].width, objects[i].height);
+
+                }
+            }
+            
+        }
+
+        function modelLoaded() {
+            console.log("Model Loaded");
+            status = true;
+        }
+
+        function gotResult(error, results) {
+            if(error) {
+                console.error(error);
+            }
+
+            else {
+                console.log(results);
+                objects = results;
+                
+            }
+        }
+        </script>
+    </body>
+</html>
